@@ -84,12 +84,12 @@ function render(){
         }
     }
 
-    //마지막에 뿌려줌
-    taskBoard.innerHTML = resultHTML;
+    //원래 강의 소스, 마지막에 뿌려줌
+    //taskBoard.innerHTML = resultHTML;
 
     //세션담기
-    //localStorage.setItem("memo",resultHTML);
-    //taskBoard.innerHTML = localStorage.getItem("memo");
+    localStorage.setItem("memo",resultHTML);
+    taskBoard.innerHTML = localStorage.getItem("memo");
 
 }
 
