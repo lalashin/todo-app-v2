@@ -5,8 +5,7 @@ https://lala-todo-v2.netlify.app/
 [Upgrade Description]
 
 1. tab - all / ongoing / done
-2. 
-3. Save refresh(F5) as container
+2. Save refresh(F5) as container
 
 
 
