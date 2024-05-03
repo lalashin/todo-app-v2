@@ -18,10 +18,38 @@ let underLine = document.getElementById("under-line");
 let taskList = [];
 let mode = "all";
 let filterList =[];
-addButton.addEventListener("click",addTask);
+let task =[];
+
+let savedTodoList = JSON.parse(localStorage.getItem('saved-items'));
+//console.log("localStorage",savedTodoList);
+
+//if(savedTodoList){} 여기서부터 작업하기
+if(savedTodoList){
+    for(let i=0;i<savedTodoList.length;i++){
+        addTask(savedTodoList[i]);
+    }
+}
+
+// 버튼 클릭이벤트 따로 분리하기
+//addButton.addEventListener("click",addTask);
+addButton.addEventListener('click', ()=>{
+    if(taskInput.value !==''){
+        addTask();
+    }else{
+        alert("할일을 입력하세요!");
+    }
+
+});
+
 taskInput.addEventListener("keydown",function(event){
     if(event.keyCode === 13){
-        addTask(event);
+        //addTask(event);
+        if(taskInput.value !==''){
+            addTask();
+        }else{
+            alert("할일을 입력하세요!");
+        }
+    
     }
 });
 
@@ -29,21 +57,42 @@ taskInput.addEventListener("keydown",function(event){
 for(let i=1;i<tabs.length;i++){
     tabs[i].addEventListener("click",function(event){
         filter(event);
+        console.log("이벤트", mode)
     });
 }
 
-function addTask() {
+function addTask(storageData) {
     //console.log("clicked")
     let taskValue = taskInput.value;
-    if(taskValue === "") return alert("할일을 입력하세요!");
-    let task = {
-        id:randomIDGenerate(),
-        taskContent : taskInput.value,
-        isComplete:false
-    }  
+    
+    if(storageData) {
+        taskValue = storageData.taskContent;
+         task = {
+            id:storageData.id,
+            //taskContent : taskInput.value,
+            taskContent : taskValue,
+    
+            isComplete:storageData.isComplete
+        }  
+    }else{
+        task = {
+            id:randomIDGenerate(),
+            //taskContent : taskInput.value,
+            taskContent : taskValue,
+    
+            isComplete:false
+        }  
+    }
+
+    //if(taskValue === "") return alert("할일을 입력하세요!");
+    
+   
 
     taskList.push(task);
-    console.log(taskList);
+   // console.log(JSON.stringify(taskList));//문자열로 변환
+   
+    localStorage.setItem('saved-items',JSON.stringify(taskList));
+    //console.log("taskList",taskList);
     taskInput.value="";
     render()
 }
@@ -85,35 +134,68 @@ function render(){
     }
 
     //원래 강의 소스, 마지막에 뿌려줌
-    //taskBoard.innerHTML = resultHTML;
+    taskBoard.innerHTML = resultHTML;
 
-    //세션담기
-    localStorage.setItem("memo",resultHTML);
-    taskBoard.innerHTML = localStorage.getItem("memo");
+   
 
 }
 
 function toggleComplete(id){
    // console.log("id:",id);
-    for(let i=0;i<taskList.length;i++){
-        if(taskList[i].id === id) {
-            // taskList[i].isComplete = true;
-            taskList[i].isComplete = !taskList[i].isComplete;
-            break;
+  
+    if(savedTodoList){       
+        for(let i=0;i<savedTodoList.length;i++){           
+            //console.log("localStorage",savedTodoList[i].id);
+            if(savedTodoList[i].id === id){
+                console.log("id",savedTodoList[i].id);                
+                savedTodoList[i].isComplete = !savedTodoList[i].isComplete;    
+                console.log("isComplete",savedTodoList[i].isComplete); 
+                break;
+            }
+         
         }
     }
+
+    for(let i=0;i<taskList.length;i++){
+            if(taskList[i].id === id) {
+                taskList[i].isComplete = !taskList[i].isComplete;           
+                break;
+            }
+        }  
+       
+    localStorage.setItem('saved-items',JSON.stringify(taskList));
+   
     filter()
-    //console.log(taskList)
+   
 }
 
 function deleteTask(id) {
     //console.log("삭제하자", id);
+    if(savedTodoList){       
+        for(let i=0;i<savedTodoList.length;i++){           
+            //console.log("localStorage",savedTodoList[i].id);
+            if(savedTodoList[i].id === id){
+                savedTodoList.splice(i,1)
+                break;
+            }
+         
+        }
+    }
     for(let i=0; i<taskList.length;i++){
         if(taskList[i].id === id){
             taskList.splice(i,1)
             break;
         }
     }
+
+    if(savedTodoList.length === 0){
+        localStorage.removeItem('saved-items')
+    }else{
+        // console.log(JSON.stringify(saveItems));//문자열로 변환
+        localStorage.setItem('saved-items',JSON.stringify(taskList));
+    }
+    
+    
     filter();
 }
 
@@ -140,6 +222,7 @@ function filter(event){
         for(let i=0;i<taskList.length;i++){
             if(taskList[i].isComplete === false) {
                 filterList.push(taskList[i])
+                
             }           
         }
         render()
@@ -159,3 +242,4 @@ function filter(event){
 function randomIDGenerate(){
     return '_' + Math.random().toString(36).substr(2, 9);
 }
+

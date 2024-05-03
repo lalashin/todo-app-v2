@@ -1,0 +1,13 @@
+일단 render 는 화면에 데이터를 뿌리는 용도입니다 여기에서 localstoreage에 데이터를 저장해주는건 이 함수의 역할과 맞지 않습니다.
+8:09
+그리고 localstorage에 저 html 태그 모두다 그대로 저장하는것 또한 맞지 않습니다 localstorage에 그냥 어레이 리스트만 저장해두고 그걸 가져다가 그리는 형태로 코드를 짜셔야 합니다
+8:10
+setItem 하자마자 getItem 하는것 또한 불필요 합니다.
+8:10
+localstorage는 말그대로 데이터가 날라가지 않게 저장해놨다가 진짜 필요할 때 꺼내쓰는 용도로 사용됩니다.
+8:10
+따라서 addTask에서 setItem을 해주시고 처음 웹사이트 들어올때 기본값으로 setItem에서 불러온 값을 넣어주시면 됩니다
+
+
+ //localStorage.setItem("memo",resultHTML);
+    //taskBoard.innerHTML = localStorage.getItem("memo");
